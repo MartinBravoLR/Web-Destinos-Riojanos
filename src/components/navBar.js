@@ -17,7 +17,7 @@ import MenuIcon from '@mui/icons-material/MenuOutlined';
 
 import {Link} from 'react-router-dom';
 
-const pages = ['Destinos'];
+const pages = ['Destinos','Mapa'];
 
 function ResponsiveAppBar() {
 

@@ -5,6 +5,7 @@ import "./App.css";
 //Crud
 import api from "../../services/api";
 import ResponsiveAppBar from '../../components/navBar';
+import { Grid }  from "@mui/material";
 
 
 const MapList = () => {
@@ -32,6 +33,9 @@ const MapList = () => {
 
 
   return (
+
+    <Grid>
+        <ResponsiveAppBar />
     <MapContainer center={[-29.344890090721737, -66.86058361835023]} zoom={8}scrollWheelZoom={false}>
         <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -42,12 +46,12 @@ const MapList = () => {
           
           places && places.map(place=>(
           <Marker key={place._id}
-            position={[place.coordinates.lat,place.coordinates.long]}
+            position={[place.coordinatesLat,place.coordinatesLong]}
             >
                 <Popup style={{ alignContent:"center"}}>
                     <h1>{place.name}</h1> <br />  
                   <div style={{borderRadius:20,backgroundColor:"#820000",height:40,width:180}}>
-                    <h2 style={{ color:'white',alignContent:"center"}}>{place.type}</h2>
+                    <h4 style={{ color:'white',alignContent:"center"}}>{place.type}</h4>
                   </div>
                 </Popup>
             </Marker> ))
@@ -55,6 +59,7 @@ const MapList = () => {
 
    
   </MapContainer>
+  </Grid>
   )
 }
 

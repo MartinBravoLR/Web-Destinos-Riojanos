@@ -1,6 +1,5 @@
 import React, {useState } from "react";
 
-//Templates Mui and Icon
 import {
 	Grid,
   DialogTitle,
@@ -11,49 +10,33 @@ import {
   TextField,
   Button,
   InputAdornment,
-  Alert
+  
 
 } from "@mui/material";
-
+import CreateIcon from '@mui/icons-material/Create';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-//Api 
 
 import api from "../services/api";
-//Redux
-
-import { useSelector, useDispatch } from "react-redux";
-import { appSelector, appActions } from "../redux/appRedux";
 
 
-export default function FormDialog({addNewPlace}) {
-	
-  const dispatch = useDispatch();
+export default function Update({data}) {
 
 // React States 
   const [openC, setOpenC] = React.useState(false);
 	const [places, setPlaces] = useState(null);
   const [open, setOpen] = React.useState(false);
   const [payload, setPayload] = React.useState({
+      _id:"",
       name: "",
       info: "",
       image: "",
       locate: "",
-      coordinatesLat:"",
-      coordinatesLong:"",
       imageU:"",
       image:[]
     });
 
     ///Save Function Click
-    const createHandleClickOpen = async(payload) => {
-        console.log("Create Place")
-        await NewPlaces(payload);
-        getPlaces();
-        setOpenC(true);
-       setOpen(false);
-       addNewPlace(payload);
-      
-      };
+   
       
       const CreateHandleClose = () => {
         setOpenC(false);
@@ -62,48 +45,23 @@ export default function FormDialog({addNewPlace}) {
       const click = async() => {
         payload.image.push(payload.imageU)
         console.log(payload);
-        await getPlaces();
-        createHandleClickOpen(payload)
-        
+        UpdatePlace(payload);
       };
     
 
   
     ///Crud Axios Functions 
 
-    const getPlaces = async() =>{
-        try {
-            dispatch(appActions.loading(true));
-            const result=await api.GET(api.places);
-            if (result){
-                console.log(`places: `,result.data);
-                setPlaces(result.data);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-        finally {
-          dispatch(appActions.loading(false));
-
-        }
-
-    }
-    const NewPlaces = async(payload) =>{
+    const UpdatePlace = async(payload) =>{
      
         try {
-            dispatch(appActions.loading(true));
-
-            const result=await api.POST(api.places,payload);
+            const result=await api.PATCH(api.places,payload);
             if (result){
-                console.log(`Newplaces: `,result.data);
+                console.log(`Update: `,result.data);
 
             }
         } catch (error) {
             console.log(error);
-        }
-        finally {
-          dispatch(appActions.loading(false));
-
         }
     }
 
@@ -129,17 +87,31 @@ export default function FormDialog({addNewPlace}) {
 
   return (
   <div>
-  <Button variant="contained" onClick={handleClickOpen} style={{borderRadius:20,margin:5}}>
-    Agregar Destino
-   </Button>
-  <Dialog open={open} onClose={handleClose}>
+
+  <Button variant="contained" endIcon={<CreateIcon />} onClick={handleClickOpen}>
+    Update
+  </Button>
+ <Dialog open={open} onClose={handleClose}>
     <DialogTitle>Nuevo Destino!</DialogTitle>
    <DialogContent>
         <DialogContentText>
-          Proporciona estos datos para crear un nuevo lugar.
+          Proporciona los nuevos datos para Actualizar el Destino.
         </DialogContentText>
 
     <Grid container spacing={3}>
+         <Grid xs={12} item>
+              <TextField 
+              margin="dense"
+              name="_id"
+              id="_id" 
+              label="_id" 
+              variant="outlined"  
+              fullWidth
+              onChange={handleChange}
+              value={data._id}
+              disabled
+             />
+          </Grid>
             <Grid xs={12} item>
               <TextField 
               margin="dense"
@@ -148,8 +120,8 @@ export default function FormDialog({addNewPlace}) {
               label="Nombre" 
               variant="outlined"  
               fullWidth
-              required
               onChange={handleChange}
+              defaultValue={data.name}
               value={payload.name}
              />
           </Grid>
@@ -163,6 +135,7 @@ export default function FormDialog({addNewPlace}) {
               fullWidth
               required
               onChange={handleChange}
+              defaultValue={data.locate}
               value={payload.locate}
               InputProps={{
                   startAdornment: (
@@ -173,30 +146,7 @@ export default function FormDialog({addNewPlace}) {
                 }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-                <TextField
-                  name="coordinatesLat"
-                  required
-                  fullWidth
-                  id="coordinatesLat"
-                  label="Coordenadas Latitude"
-                  onChange={handleChange}
-                  value={payload.coordinatesLat}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="coordinatesLong"
-                  label="Coordenadas Longitude"
-                  name="coordinatesLong"
-                  onChange={handleChange}
-
-                  value={payload.coordinatesLong}
-
-                />
-              </Grid>
+      
            <Grid xs={12} item>
        
               <TextField 
@@ -210,6 +160,8 @@ export default function FormDialog({addNewPlace}) {
                   fullWidth
                   required
                   onChange={handleChange}
+                  defaultValue={data.type}
+
                   value={payload.type}
                 />
             </Grid>
@@ -226,6 +178,8 @@ export default function FormDialog({addNewPlace}) {
                     fullWidth
                     required
                     onChange={handleChange}
+                    defaultValue={data.info}
+
                     value={payload.info}
                 />
           </Grid>
@@ -242,6 +196,8 @@ export default function FormDialog({addNewPlace}) {
                       fullWidth
                       required
                       onChange={handleChange}
+                      defaultValue={data.imageU}
+
                       value={payload.imageU}
                   />
             </Grid>
@@ -252,7 +208,7 @@ export default function FormDialog({addNewPlace}) {
        
         <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={click}>Crear</Button>     
+            <Button onClick={click}>Actualizar</Button>     
         </DialogActions>
 
  </Dialog>

@@ -10,12 +10,17 @@ import {
     Typography,
     Menu,
     MenuItem,
+    Avatar
    } from "@mui/material";
 
 import AdbIcon from '@mui/icons-material/Adb';
 import MenuIcon from '@mui/icons-material/MenuOutlined';
+import { ThemeProvider, styled } from '@mui/material/styles';
+import theme from "../styles/styles"
 
 import {Link} from 'react-router-dom';
+
+import RIOJA from "../images/rioja.png"
 
 const pages = ['Destinos','Mapa'];
 
@@ -32,10 +37,11 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" color="secondary">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+        <Avatar sx={{display:{xs:"none",md:"flex"},mr:1}}alt="Remy Sharp" src={RIOJA} />
+
           <Typography
             variant="h6"
             noWrap
@@ -46,14 +52,13 @@ function ResponsiveAppBar() {
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'arial',
               fontWeight: 700,
-              letterSpacing: '.0,5rem',
+              letterSpacing: '.1rem',
               color: 'inherit',
               textDecoration: 'none',
             }}
           >
-            Destinos Riojanos
+            DestinosRiojanos
           </Typography>
-
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -94,7 +99,6 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap

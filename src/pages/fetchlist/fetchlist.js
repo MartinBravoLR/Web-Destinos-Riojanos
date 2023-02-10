@@ -1,5 +1,7 @@
 
 import React, { useEffect, useState } from "react";
+
+//Templates Mui and Icon
 import {
 	  Grid,
     Card,
@@ -10,10 +12,18 @@ import {
     Button,
     Dialog,
     DialogTitle,
-    DialogContent
+    DialogContent,
+    Box,
+    
 } from "@mui/material";
-import Form from '../../components/forms';
 
+import DeleteIcon from '@mui/icons-material/Delete';
+import CreateIcon from '@mui/icons-material/Create';
+import Stack from '@mui/material/Stack';
+import Form from '../../components/forms';
+import Update from '../../components/update';
+
+import {Link} from 'react-router-dom';
 //Crud
 import api from "../../services/api";
 import ResponsiveAppBar from '../../components/navBar';
@@ -21,26 +31,35 @@ import ResponsiveAppBar from '../../components/navBar';
 //Icons mui
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
+//Redux
+import { useSelector, useDispatch } from "react-redux";
+import { appSelector, appActions } from "../../redux/appRedux";
 
 //Maps
 import Map from "../../components/map"
 
 const Fetchlist = () => {
 
-	  const [places, setPlaces] = useState(null);
+    //Redux
+	const dispatch = useDispatch();
+
+    //Hooks
+	const [places, setPlaces] = useState(null);
     const [open, setOpen] = useState(false);
     const [data, setData] = useState(
         {   _id:1231313,
             name:"examplename",
             image:["url1", "url2", "url3"],
             locate:"",
-            coordinates:{lat:"",long:""},
+            coordinatesLat:"",
+            coordinatesLong:"",
             type:"National Park",
             info:"lorem"
     });
 
  ///Dialog LOGIC OPEN / CLOSE
     const handleClickOpen = (item) => {
+        
         console.log(typeof(item));
         setData(item);
         console.log(data);
@@ -51,8 +70,14 @@ const Fetchlist = () => {
         setOpen(false);
       };
 
-    
+      const ClickDelete = async(data) => {
+        await deletePlace(data);
+        window.location.reload()
+          };
+
       useEffect(() =>{
+        dispatch(appActions.setPageTitle("Places"));
+
         getPlaces();
     },[]);
      
@@ -68,6 +93,8 @@ const Fetchlist = () => {
     //CRUD FUNCTIONS
         const getPlaces = async() =>{
             try {
+                dispatch(appActions.loading(true));
+
                 const result=await api.GET(api.places);
                 if (result){
                     console.log(`places: `,result.data);
@@ -76,8 +103,29 @@ const Fetchlist = () => {
             } catch (error) {
                 console.log(error);
             }
-        }
+            finally {
+                dispatch(appActions.loading(false));
 
+            }
+        }
+        
+        const deletePlace = async(data) =>{
+            
+            const url=api.placesURL+data._id
+            try {
+                dispatch(appActions.loading(true));
+                console.log(url);
+                const result=await api.DELETE(url);
+                    
+            } catch (error) {
+                console.log(error);
+            }
+            finally {
+                dispatch(appActions.loading(false));
+
+            }
+        }
+        
 ///Item card Generator
     const renderItem = (item) => {
  
@@ -105,58 +153,78 @@ const Fetchlist = () => {
         }
     
   return (
-<>
-    <Grid container spacing={3} align="center" sx={{backgroundColor:"red"}}>
-    <ResponsiveAppBar/>
+    <>
+        <Grid container spacing={3} align="center" sx={{backgroundColor:"#F2DEBA"}}>
+                <ResponsiveAppBar/>
 
-        <Grid item xs={12}>
-            <Typography component="div" variant="h5">
-            Destinos Riojanos
-            </Typography>
+                    <Grid item xs={12}>
+                        <Typography component="div" variant="h2">
+                        Destinos 
+                        </Typography>
+                        
+                    </Grid>
             
-            <Form addNewPlace={addNewPlace}/>
-        </Grid>
- 
-    {
-    places && places.map((p, index)=>{
-        return(
-            <Grid item lg={4} md={2} key={index}>
-            {renderItem(p)}
+                {
+                places && places.map((p, index)=>{
+                    return(
+                        <Grid item lg={4} md={2} key={index}>
+                        {renderItem(p)}
+                        </Grid>
+                        )
+                    })
+                }
             </Grid>
-            )
-         })
-    }
-</Grid>
 
-    <Dialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-        maxWidth={"md"}
-        minWidth={"xs"}
-       >
+                <Dialog
+                    onClose={handleClose}
+                    aria-labelledby="customized-dialog-title"
+                    open={open}
+                    maxWidth={"md"}
+                    minWidth={"xs"}
+                >
 
-         <DialogTitle id="customized-dialog-title" onClose={handleClose} sx={{ fontFamily:"arial",fontWeight: 'fontWeightLight' }} >
-         {data.name}
-        </DialogTitle>
-        
-         <DialogContent dividers>
-          <Typography gutterBottom align="justify">
-            {data.info}
-          </Typography>
-          <CardMedia
-                  maxWidth={"md"}
-                  minWidth={"xs"}
-                  component="img"
-                  height="400"
-                  image={data.image[0]}
-                  alt={`${data.name} image`}
-                />
-            <Map _id={data._id} name={data.name} lat={data.coordinates.lat} long={data.coordinates.long} type={data.type}/>
-        </DialogContent>
-    </Dialog>
+                    <DialogTitle id="customized-dialog-title" onClose={handleClose} sx={{ fontFamily:"arial",fontWeight: 'fontWeightLight' }} >
+                    {data.name}
+                    </DialogTitle>
+                
+                    <DialogContent dividers align="center">
+                    <Typography gutterBottom align="justify">
+                        {data.info}
+                    </Typography>
+                    <CardMedia
+                            maxWidth={"md"}
+                            minWidth={"xs"}
+                            component="img"
+                            height="400"
+                            image={data.image[0]}
+                            alt={`${data.name} image`}
+                            />
+                        
+                        <Button variant="contained" color="primary" sx={ { borderRadius: 28 ,margin:1} }>{data.type}</Button>
+                        
+                        <Map _id={data._id} name={data.name} lat={data.coordinatesLat} long={data.coordinatesLong} type={data.type}/>
+                    
+                            <Button variant="contained" sx={{margin:1}}startIcon={<DeleteIcon />} color="error" onClick={()=>{ClickDelete(data)}}>
+                                Delete
+                            </Button>
+                    </DialogContent>
+        </Dialog>
 
-</> 
+        <Box sx={{ bgcolor: '#4E6C50', p: 6 }} component="footer" align="center">
+                <Typography variant="h5" align="center" gutterBottom>
+                    Contribuye con nosotros!
+                </Typography>
+                <Form addNewPlace={addNewPlace}/>
+                <Typography
+                variant="subtitle1"
+                align="center"
+                color="text.secondary"
+                component="p"
+                >
+                    Describe el lugar y lo añadiremos a nuestra base de datos
+                </Typography>
+        </Box>
+    </> 
  )
 }
 

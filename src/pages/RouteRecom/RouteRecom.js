@@ -20,8 +20,10 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 
-import DraftsIcon from '@mui/icons-material/Drafts';
-import SendIcon from '@mui/icons-material/Send';
+import ShieldIcon from '@mui/icons-material/Shield';
+import ArticleIcon from '@mui/icons-material/Article';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import CarRepairIcon from '@mui/icons-material/CarRepair';
 
  const RouteRecom=()=> {
   return (
@@ -48,20 +50,32 @@ import SendIcon from '@mui/icons-material/Send';
     >
       <ListItemButton>
         <ListItemIcon>
-          <SendIcon />
+        <ArticleIcon/>
         </ListItemIcon>
-        <ListItemText primary="Sent mail" />
+        <ListItemText primary="DNI y Licencia de Conducir" />
       </ListItemButton>
       <ListItemButton>
         <ListItemIcon>
-          <DraftsIcon />
+          <ShieldIcon />
         </ListItemIcon>
-        <ListItemText primary="Drafts" />
+        <ListItemText primary="Seguro y Cedula Verde/Azul" />
+      </ListItemButton>
+      <ListItemButton>
+        <ListItemIcon>
+          <LocalFireDepartmentIcon />
+        </ListItemIcon>
+        <ListItemText primary="Matafuegos,Balizas y Chaleco reflectivo" />
+      </ListItemButton>
+      <ListItemButton>
+        <ListItemIcon>
+          < CarRepairIcon />
+        </ListItemIcon>
+        <ListItemText primary="Verificación técnica vehicular (VTV)" />
       </ListItemButton>
       
     </List>
       </Box>
-
+    
 
 
       </>

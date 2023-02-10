@@ -22,6 +22,8 @@ import api from "../services/api";
 export default function Update({data}) {
 
 // React States 
+const [datos, setDatos] = React.useState(data);
+
   const [openC, setOpenC] = React.useState(false);
 	const [places, setPlaces] = useState(null);
   const [open, setOpen] = React.useState(false);
@@ -31,12 +33,13 @@ export default function Update({data}) {
       info: "",
       image: "",
       locate: "",
+      coordinatesLat:"",
+      coordinatesLong:"",
       imageU:"",
       image:[]
     });
 
     ///Save Function Click
-   
       
       const CreateHandleClose = () => {
         setOpenC(false);
@@ -45,17 +48,19 @@ export default function Update({data}) {
       const click = async() => {
         payload.image.push(payload.imageU)
         console.log(payload);
-        UpdatePlace(payload);
+        UpdatePlace(payload,data);
+        window.location.reload()
+
       };
     
 
   
     ///Crud Axios Functions 
 
-    const UpdatePlace = async(payload) =>{
+    const UpdatePlace = async(payload,data) =>{
      
         try {
-            const result=await api.PATCH(api.places,payload);
+            const result=await api.PATCH(api.placesURL+data._id,payload);
             if (result){
                 console.log(`Update: `,result.data);
 
@@ -88,14 +93,17 @@ export default function Update({data}) {
   return (
   <div>
 
-  <Button variant="contained" endIcon={<CreateIcon />} onClick={handleClickOpen}>
+  <Button variant="contained" color="secondary"endIcon={<CreateIcon />} onClick={handleClickOpen}>
     Update
   </Button>
  <Dialog open={open} onClose={handleClose}>
-    <DialogTitle>Nuevo Destino!</DialogTitle>
+    <DialogTitle>Actualiza los datos de {datos.name}!</DialogTitle>
    <DialogContent>
         <DialogContentText>
           Proporciona los nuevos datos para Actualizar el Destino.
+          <br />
+          Pd:Si no quieres cambiar algunos no lo completes
+          <br />
         </DialogContentText>
 
     <Grid container spacing={3}>
@@ -108,7 +116,8 @@ export default function Update({data}) {
               variant="outlined"  
               fullWidth
               onChange={handleChange}
-              value={data._id}
+              defaultValue={datos._id}
+              value={payload._id}
               disabled
              />
           </Grid>
@@ -121,7 +130,7 @@ export default function Update({data}) {
               variant="outlined"  
               fullWidth
               onChange={handleChange}
-              defaultValue={data.name}
+              defaultValue={datos.name}
               value={payload.name}
              />
           </Grid>
@@ -134,8 +143,9 @@ export default function Update({data}) {
               variant="outlined"  
               fullWidth
               required
+              
               onChange={handleChange}
-              defaultValue={data.locate}
+              defaultValue={datos.locate}
               value={payload.locate}
               InputProps={{
                   startAdornment: (
@@ -147,25 +157,50 @@ export default function Update({data}) {
             />
           </Grid>
       
-           <Grid xs={12} item>
-       
-              <TextField 
-                  multiline
-                  margin="dense"
-                  name="type"
-                  id="type" 
-                  label="Tipo de Destino" 
-                  helperText="Ej. Reserva Natural,Río,Lugar Histórico"
-                  variant="outlined"  
-                  fullWidth
-                  required
-                  onChange={handleChange}
-                  defaultValue={data.type}
 
-                  value={payload.type}
+       <Grid item xs={12} sm={6}>
+                <TextField
+                  name="coordinatesLat"
+                  required
+                  fullWidth
+                  id="coordinatesLat"
+                  label="Coordenadas Latitude"
+                  onChange={handleChange}
+                  value={payload.coordinatesLat}
                 />
-            </Grid>
-      
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="coordinatesLong"
+                  label="Coordenadas Longitude"
+                  name="coordinatesLong"
+                  onChange={handleChange}
+
+                  value={payload.coordinatesLong}
+
+                />
+              </Grid>
+              <Grid xs={12} item>
+       
+       <TextField 
+           multiline
+           margin="dense"
+           name="type"
+           id="type" 
+           label="Tipo de Destino" 
+           helperText="Ej. Reserva Natural,Río,Lugar Histórico"
+           variant="outlined"  
+           fullWidth
+           required
+
+           onChange={handleChange}
+           defaultValue={datos.type}
+
+           value={payload.type}
+         />
+     </Grid>
           <Grid xs={12} item>
        
                 <TextField 
@@ -178,7 +213,7 @@ export default function Update({data}) {
                     fullWidth
                     required
                     onChange={handleChange}
-                    defaultValue={data.info}
+                    defaultValue={datos.info}
 
                     value={payload.info}
                 />
@@ -196,7 +231,7 @@ export default function Update({data}) {
                       fullWidth
                       required
                       onChange={handleChange}
-                      defaultValue={data.imageU}
+                      defaultValue={datos.imageU}
 
                       value={payload.imageU}
                   />

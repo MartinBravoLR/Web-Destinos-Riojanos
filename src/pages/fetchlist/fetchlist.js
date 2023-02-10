@@ -207,6 +207,7 @@ const Fetchlist = () => {
                             <Button variant="contained" sx={{margin:1}}startIcon={<DeleteIcon />} color="error" onClick={()=>{ClickDelete(data)}}>
                                 Delete
                             </Button>
+                            <Update data={data}/>
                     </DialogContent>
         </Dialog>
 
